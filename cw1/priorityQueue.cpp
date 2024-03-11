@@ -6,8 +6,7 @@
 #include <vector>
 
 class Container
-{
-protected:
+{protected:
     Container (){};
 public:
     virtual unsigned int Count () const = 0;
@@ -105,7 +104,7 @@ T BinaryHeap<T>::FindMin() const {
 }
 
 template<typename T>
-bool BinaryHeap<T>::IsFull() const { //rozmiar wektora jest alokowany dynamicznie, wiec nie trzeba sie martwic przepelnieniem wektora.
+bool BinaryHeap<T>::IsFull() const {
     return false;
 }
 
@@ -121,7 +120,7 @@ void BinaryHeap<T>::Enqueue(T element) {
     int i = count - 1; //indeks nowo dodanego elementu
     while (i != 0 && data[parent(i)] > data[i]) {
 
-        std::swap(data[i], data[parent(i)]); //zamien miejscami jak nowy element jest mniejszy niz jego rodic.
+        std::swap(data[i], data[parent(i)]); //zamien miejscami jak jak nowy element jest mniejszy niz jego rodic.
         i = parent(i); //przesun w gore do rodzica
     }
 }
