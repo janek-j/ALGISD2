@@ -1,6 +1,5 @@
 #include <vector>
 #include <iostream>
-#include <stdbool.h>
 
 template <typename T>
 class Visitor
@@ -31,11 +30,11 @@ protected:
     int universeSize;
 public:
     Set (int n) : universeSize (n) {}
-    int UniverseSize() const {return universeSize;}
-    int Count() const {return count;};
-    virtual void Insert (T element)=0;
-    virtual bool IsMember (T element) const=0;
-    virtual void Withdraw (T element)=0;
+    int UniverseSize() const { return universeSize; }
+    int Count() const { return count; };
+    virtual void Insert (T element) = 0;
+    virtual bool IsMember (T element) const = 0;
+    virtual void Withdraw (T element) = 0;
 };
 
 
@@ -70,18 +69,17 @@ public:
             count--;
         }
     }
-    bool IsFull () const {return ( Count()==UniverseSize()); };
+    bool IsFull () const { return ( Count()==UniverseSize()); };
     void Accept (Visitor<int> & v) {
-        for(int i = 0; i < universeSize; i++) {
-            if(array[i]) {
+        for (int i = 0; i < universeSize; i++) {
+            if (array.at(i)) {
                 v.Visit(i);
-                if(v.IsDone()) {
+                if (v.IsDone()) {
                     break;
                 }
             }
         }
     }
-    //friend- funkcja uzyska prawo dostepu do prywatnych elementow danej klasy.
 
     friend SetAsArray operator + (
             SetAsArray const& z1, SetAsArray const& z2) {
@@ -145,6 +143,7 @@ public:
         }
         std::cout << std::endl;
     }
+
 };
 
 class Odd_Visitor:public Visitor<int>
@@ -153,10 +152,23 @@ protected:
     bool IsDone_;
 public:
     Odd_Visitor():IsDone_(false){};
-    void Visit(int & element) {if (element%2==1) IsDone_=true;
-    };
+    void Visit(int & element) { if(element%2==1) { IsDone_=true; } };
     bool IsDone() const override { return IsDone_; }
 };
+
+template<typename T>
+class AddingVisitor: public Visitor<T> {
+protected:
+    int sum = 0;
+public:
+    void Visit(T &i) override {
+        sum += i;
+    }
+    T Sum() const {
+        return sum;
+    }
+};
+
 
 void Zadanie_zbiory_1() {
     SetAsArray A(10), B(10), C(10), D(10);
@@ -186,8 +198,29 @@ void Zadanie_zbiory_1() {
     std::cout << "Po dodaniu jedynki:" << std::endl;
     std::cout << "D == A: " << (D == A ? "true" : "false") << std::endl;
     std::cout << "D <= A: " << (D <= A ? "true" : "false") << std::endl;
-}
+    //Koniec zadania 1.1 //
 
+    A.Insert(5);
+
+    AddingVisitor<int> v_A;
+    A.Accept(v_A);
+    std::cout << "Suma elementow zbioru A: " << v_A.Sum() << std::endl;
+
+    SetAsArray E = A * B;
+    AddingVisitor<int> v_E;
+    E.Accept(v_E);
+    std::cout << "Suma elementow zbioru E: " << v_E.Sum() << std::endl;
+
+    E.Withdraw(1);
+    AddingVisitor<int> v_E_after_withdraw;
+    E.Accept(v_E_after_withdraw);
+    std::cout << "Suma elementow zbioru E po usunieciu 1: " << v_E_after_withdraw.Sum() << std::endl; // Wypisanie sumy
+    //Koniec zadania 1.2
+
+    Odd_Visitor vis;
+    
+
+}
 int main(int args, char* argv[]) {
     Zadanie_zbiory_1();
     return 0;
