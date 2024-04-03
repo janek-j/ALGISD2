@@ -2,6 +2,14 @@
 #include <iostream>
 
 template <typename T>
+class Iterator
+{
+public:
+    virtual ~Iterator (){}
+    Iterator(){;}
+    virtual bool IsDone () const = 0;virtual const T & operator * () = 0;virtual void operator ++ () = 0;};
+
+template <typename T>
 class Visitor
 {
 public:
@@ -51,6 +59,38 @@ class SetAsArray : public Set<int>
 {
     std::vector<bool> array;
 public:
+
+    class Iter:public Iterator<int>
+    {
+        std::vector<bool> data;
+        int universeSize;
+        int index;
+    public:
+        Iter(std::vector<bool> array, int us) : data(array), universeSize(us), index(-1) {
+            ++(*this);
+        }
+        ~Iter() {
+
+        }
+        const int & operator * () {
+            static int invalid = -1;
+            if(index >= 0 && index < universeSize && data[index]) {
+                return index;
+            } else {
+                return invalid;
+            }
+        }
+        void operator ++ () {
+            do {
+                index++;
+            } while(index < universeSize && !data[index]);
+        }
+        bool IsDone () const {
+            return index >= universeSize;
+        }
+
+    };
+
     SetAsArray (unsigned int n) : Set<int>(n), array(n, false) { //zlozonosc O(n), inicjuje zbior wartosciami false
         unsigned int t = 0;
         count = 0;
@@ -58,6 +98,9 @@ public:
             array.at(t) = false;
             t++;
         }
+    }
+    Iter Begin() const {
+        return Iter(array, array.size());
     }
     void MakeNull() {
         std::fill(array.begin(), array.end(), false);
@@ -355,7 +398,31 @@ void zad4() {
 
 }
 
+
+
+void zbioryIterator() {
+    SetAsArray A(10), B(10);
+    for(int i = 0; i < 10; i++) {
+        if(i % 2 == 0) {
+            A.Insert(i);
+        } else {
+            B.Insert(i);
+        }
+    }
+    std::cout << "Zbior A: ";
+    for(auto it = A.Begin(); !it.IsDone(); ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "Zbior B: ";
+    for(auto it = B.Begin(); !it.IsDone(); ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+
+}
+
 int main(int args, char* argv[]) {
-    zad4();
+    zbioryIterator();
     return 0;
 }
