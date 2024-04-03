@@ -37,6 +37,15 @@ public:
     virtual void Withdraw (T element) = 0;
 };
 
+class Odd_Visitor:public Visitor<int>
+{
+protected:
+    bool IsDone_;
+public:
+    Odd_Visitor():IsDone_(false){};
+    void Visit(int & element) { if (element%2==1) { IsDone_=true; } };
+    bool IsDone() const override { return IsDone_; }
+};
 
 class SetAsArray : public Set<int>
 {
@@ -80,7 +89,16 @@ public:
             }
         }
     }
-
+    void AcceptOdd (Odd_Visitor & v) {
+        for (int i = 0; i < universeSize; i++) {
+            if (array.at(i)) {
+                v.Visit(i);
+                if (v.IsDone()) {
+                    break;
+                }
+            }
+        }
+    }
     friend SetAsArray operator + (
             SetAsArray const& z1, SetAsArray const& z2) {
         int n = z1.universeSize;
@@ -143,18 +161,8 @@ public:
         }
         std::cout << std::endl;
     }
-
 };
 
-class Odd_Visitor:public Visitor<int>
-{
-protected:
-    bool IsDone_;
-public:
-    Odd_Visitor():IsDone_(false){};
-    void Visit(int & element) { if(element%2==1) { IsDone_=true; } };
-    bool IsDone() const override { return IsDone_; }
-};
 
 template<typename T>
 class AddingVisitor: public Visitor<T> {
@@ -198,7 +206,7 @@ void Zadanie_zbiory_1() {
     std::cout << "Po dodaniu jedynki:" << std::endl;
     std::cout << "D == A: " << (D == A ? "true" : "false") << std::endl;
     std::cout << "D <= A: " << (D <= A ? "true" : "false") << std::endl;
-    //Koniec zadania 1.1 //
+    // Koniec zadania 1.1 //
 
     A.Insert(5);
 
@@ -216,12 +224,138 @@ void Zadanie_zbiory_1() {
     E.Accept(v_E_after_withdraw);
     std::cout << "Suma elementow zbioru E po usunieciu 1: " << v_E_after_withdraw.Sum() << std::endl; // Wypisanie sumy
     //Koniec zadania 1.2
+}
 
-    Odd_Visitor vis;
-    
+void zad2() {
+    SetAsArray A(10), B(10), C(10), D(10), E(10);
+    for(int i = 0; i < 10; i++) {
+        if( i % 2 == 0 ) {
+            A.Insert(i);
+        } else {
+            B.Insert(i);
+        }
+    }
+    A.Wypisz();
+    B.Wypisz();
+
+    C = A + B;
+    D = C - B;
+
+    std::cout << "Zbior A";
+    A.Wypisz();
+    std::cout << "Zbior B";
+    B.Wypisz();
+    std::cout << "Zbior C";
+    C.Wypisz();
+    std::cout << "Zbior D";
+    D.Wypisz();
+    if(D == A) {
+        std::cout << "Zbior D jest rowny zbiorowi A" << std::endl;
+    }
+    if(D <= A) {
+        std::cout << "Zbior D zawiera sie w zbiorze A" << std::endl;
+    }
+    if(C == B) {
+        std::cout << "Zbior C jest rowny zbiorowi B" << std::endl;
+    }
+    if(B <= C) {
+        std::cout << "Zbior B zawiera sie w zbiorze C" << std::endl;
+    }
+
+    A.Insert(1);
+    if(D == A) {
+        std::cout << "Zbior D jest rowny zbiorowi A" << std::endl;
+    }
+    if(D <= A) {
+        std::cout << "Zbior D zawiera sie w zbiorze A" << std::endl;
+    }
+    //nowa czesc testu
+    AddingVisitor<int> v_A;
+    A.Accept(v_A);
+    std::cout << "Suma policzona przez wizytatora zbioru A: " << v_A.Sum() << std::endl;
+
+    E = A*B;
+    AddingVisitor<int> v_E;
+    E.Accept(v_E);
+    std::cout << "Suma policzona przez wizytatora zbioru E: " << v_E.Sum() << std::endl;
+
+    E.Withdraw(1);
+    AddingVisitor<int> v_E1;
+    E.Accept(v_E1);
+    std::cout << "Suma policzona przez wizytatora zbioru E: " << v_E1.Sum() << std::endl;
+
+
 
 }
+
+void zad3() {
+    //klaska zrobiona
+}
+void zad4() {
+    SetAsArray A(10), B(10), C(10), D(10), E(10);
+    for(int i = 0; i < 10; i++) {
+        if( i % 2 == 0 ) {
+            A.Insert(i);
+        } else {
+            B.Insert(i);
+        }
+    }
+    A.Wypisz();
+    B.Wypisz();
+
+    C = A + B;
+    D = C - B;
+
+    std::cout << "Zbior A";
+    A.Wypisz();
+    std::cout << "Zbior B";
+    B.Wypisz();
+    std::cout << "Zbior C";
+    C.Wypisz();
+    std::cout << "Zbior D";
+    D.Wypisz();
+    if(D == A) {
+        std::cout << "Zbior D jest rowny zbiorowi A" << std::endl;
+    }
+    if(D <= A) {
+        std::cout << "Zbior D zawiera sie w zbiorze A" << std::endl;
+    }
+    if(C == B) {
+        std::cout << "Zbior C jest rowny zbiorowi B" << std::endl;
+    }
+    if(B <= C) {
+        std::cout << "Zbior B zawiera sie w zbiorze C" << std::endl;
+    }
+
+    A.Insert(1);
+    if(D == A) {
+        std::cout << "Zbior D jest rowny zbiorowi A" << std::endl;
+    }
+    if(D <= A) {
+        std::cout << "Zbior D zawiera sie w zbiorze A" << std::endl;
+    }
+    //nowa czesc testu
+    AddingVisitor<int> v_A;
+    A.Accept(v_A);
+    std::cout << "Suma policzona przez wizytatora zbioru A: " << v_A.Sum() << std::endl;
+
+    E = A*B;
+    AddingVisitor<int> v_E;
+    E.Accept(v_E);
+    std::cout << "Suma policzona przez wizytatora zbioru E: " << v_E.Sum() << std::endl;
+
+    E.Withdraw(1);
+    AddingVisitor<int> v_E1;
+    E.Accept(v_E1);
+    std::cout << "Suma policzona przez wizytatora zbioru E: " << v_E1.Sum() << std::endl;
+
+    Odd_Visitor odd_A;
+    A.Accept(odd_A);
+    std::cout << "Contains an odd number in A: " << (odd_A.IsDone() ? "Yes" : "No") << std::endl;
+
+}
+
 int main(int args, char* argv[]) {
-    Zadanie_zbiory_1();
+    zad4();
     return 0;
 }
