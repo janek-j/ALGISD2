@@ -51,7 +51,7 @@ protected:
     bool IsDone_;
 public:
     Odd_Visitor():IsDone_(false){};
-    void Visit(int & element) { if (element%2==1) { IsDone_=true; } };
+    void Visit(int & element) { if (element%2==1) { IsDone_=true; std::cout << "Koncze na " << element << std::endl;} };
     bool IsDone() const override { return IsDone_; }
 };
 
@@ -88,9 +88,7 @@ public:
         bool IsDone () const {
             return index >= universeSize;
         }
-
     };
-
     SetAsArray (unsigned int n) : Set<int>(n), array(n, false) { //zlozonosc O(n), inicjuje zbior wartosciami false
         unsigned int t = 0;
         count = 0;
@@ -267,8 +265,7 @@ void Zadanie_zbiory_1() {
     E.Accept(v_E_after_withdraw);
     std::cout << "Suma elementow zbioru E po usunieciu 1: " << v_E_after_withdraw.Sum() << std::endl; // Wypisanie sumy
     //Koniec zadania 1.2
-}
-
+} //to jest oddane
 void zad2() {
     SetAsArray A(10), B(10), C(10), D(10), E(10);
     for(int i = 0; i < 10; i++) {
@@ -306,6 +303,7 @@ void zad2() {
     }
 
     A.Insert(1);
+    A.Insert(5);
     if(D == A) {
         std::cout << "Zbior D jest rowny zbiorowi A" << std::endl;
     }
@@ -326,11 +324,7 @@ void zad2() {
     AddingVisitor<int> v_E1;
     E.Accept(v_E1);
     std::cout << "Suma policzona przez wizytatora zbioru E: " << v_E1.Sum() << std::endl;
-
-
-
 }
-
 void zad3() {
     //klaska zrobiona
 }
@@ -396,9 +390,17 @@ void zad4() {
     A.Accept(odd_A);
     std::cout << "Contains an odd number in A: " << (odd_A.IsDone() ? "Yes" : "No") << std::endl;
 
+    Odd_Visitor odd_E;
+    E.Withdraw(1);
+    E.Accept(odd_E);
+    std::cout << "Contains an odd number in E: " << (odd_E.IsDone() ? "Yes" : "No") << std::endl;
+
+    SetAsArray F(10);
+    F.Insert(5);
+    Odd_Visitor odd_F;
+    F.Accept(odd_F);
+    std::cout << "Contains an odd number in F: " << (odd_F.IsDone() ? "Yes" : "No") << std::endl;
 }
-
-
 
 void zbioryIterator() {
     SetAsArray A(10), B(10);
@@ -422,7 +424,7 @@ void zbioryIterator() {
 
 }
 
-int main(int args, char* argv[]) {
+int main() {
     zbioryIterator();
     return 0;
 }
